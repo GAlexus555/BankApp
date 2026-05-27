@@ -5,25 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace BankApp.Commands
+namespace BankApp.Commands;
+
+public abstract class CommandBase : ICommand
 {
-    /// <summary>
-    /// CommandBase, base class for all commands.
-    /// </summary>
-    public abstract class CommandBase : ICommand
+    public event EventHandler CanExecuteChanged;
+
+    public virtual bool CanExecute(object parameter)
     {
-        public event EventHandler CanExecuteChanged;
+        return true;
+    }
 
-        public virtual bool CanExecute(object parameter)
-        {
-            return true;
-        }
+    public abstract void Execute(object parameter);
 
-        public abstract void Execute(object parameter);
-
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, new EventArgs());
-        }
+    public void RaiseCanExecuteChanged()
+    {
+        CanExecuteChanged?.Invoke(this, new EventArgs());
     }
 }

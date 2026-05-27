@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyBoard_Project.Stores
+namespace BankApp.Stores
 {
     public class NavigationStore
     {

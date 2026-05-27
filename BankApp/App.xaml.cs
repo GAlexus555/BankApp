@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BankApp.ViewModels;
+using BankApp.Stores;
+using BankApp.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using Serilog;
 
 namespace BankApp
 {
@@ -10,24 +14,58 @@ namespace BankApp
     /// </summary>
     public partial class App : Application
     {
-        public static IServiceProvider Services { get; private set; } = null!;
+        private NavigationStore _navigationStore;
 
-        private void OnStartup(StartupEventArgs e)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public App()
         {
-            base.OnStartup(e);
+            // Loger erstellen
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.File("log.txt", rollingInterval: RollingInterval.Month, fileSizeLimitBytes: 1000000, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+                .CreateLogger();
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-            Services = serviceCollection.BuildServiceProvider();
+            // Navigation store
+            _navigationStore = new NavigationStore();
+            
+            
+            Log.Debug("App created...");
         }
 
-        private static void ConfigureServices(IServiceCollection services)
+        /// <summary>
+        /// Fires when app is starting
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnStartup(StartupEventArgs e)
         {
-            // future to configure services
-            // for example: services.AddSingleton<ApiService>();
+            Log.Information("App starting...");
 
-            // Or for view models
-            //services.AddTransient<LoginViewModel>();
+            // Navigation
+            var navService = new NavigationService(_navigationStore);
+            // Mit login anfangen
+            _navigationStore.CurrentViewModel = new LoginViewModel(navService);
+
+            // Der view container erstellen
+            MainWindow mainWindow = new MainWindow()
+            {
+                DataContext = new MainViewModel(_navigationStore)
+            };
+            mainWindow.Show();
+
+            // Andere Sachen
+            base.OnStartup(e);
+        }
+
+        /// <summary>
+        /// Fires when app is closed
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Log.Information("App closing...");
+            var currentViewModel = _navigationStore.CurrentViewModel;
         }
     }
 }
