@@ -8,7 +8,22 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
     <DockPanel>
-        <Canvas DockPanel.Dock="Top">
+        <Grid Height="70" DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="CooleBank" FontSize="36" Grid.Column="0" RenderTransformOrigin="0.5,0.5"/>
+            <Label Content="Überweisungen" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Grid.Column="1" RenderTransformOrigin="0.5,0.5"/>
+            <Label Content="Sparzinsen" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="20" Grid.Column="2"/>
+
+            <Button Name="Button_TurnOff" Content="⏻" Grid.Column="4" FontSize="36"></Button>
+        </Grid>
+        <Canvas>
             
         </Canvas>
     </DockPanel>
