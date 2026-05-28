@@ -30,4 +30,15 @@ public class AccountModel
         Birthdate = birthDate;
         Cards = cards;
     }
+
+    public void AddCard(CardModel card)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteCard(int cardNr)
+    {
+        throw new NotImplementedException();
+    }
+
 }
