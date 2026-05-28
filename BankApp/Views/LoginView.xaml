@@ -6,7 +6,11 @@
              xmlns:local="clr-namespace:BankApp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="Wheat">
+        <Button Content="LOOOGIN"
+                Width="200" Height="100"
+                Command="{Binding LoginCommand}">
             
+        </Button>
     </Grid>
 </UserControl>

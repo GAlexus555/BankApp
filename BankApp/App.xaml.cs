@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Data;
 using System.Windows;
 using Serilog;
+using System.Net.Http;
 
 namespace BankApp
 {
@@ -15,6 +16,7 @@ namespace BankApp
     public partial class App : Application
     {
         private NavigationStore _navigationStore;
+        private Uri _apiAdress;
 
         /// <summary>
         /// Constructor
@@ -29,6 +31,9 @@ namespace BankApp
 
             // Navigation store
             _navigationStore = new NavigationStore();
+
+            // Address
+            _apiAdress = new Uri("http://127.0.0.1:8000");
             
             
             Log.Debug("App created...");
@@ -40,12 +45,22 @@ namespace BankApp
         /// <param name="e"></param>
         protected override void OnStartup(StartupEventArgs e)
         {
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // To DO: implement service collection and singletons and transients
+
             Log.Information("App starting...");
 
             // Navigation
             var navService = new NavigationService(_navigationStore);
+
+            // Client, für Backend Verbindung
+            HttpClient client = new HttpClient()
+            {
+                BaseAddress = _apiAdress,
+            };
+
             // Mit login anfangen
-            _navigationStore.CurrentViewModel = new LoginViewModel(navService);
+            _navigationStore.CurrentViewModel = new LoginViewModel(navService, client);
 
             // Der view container erstellen
             MainWindow mainWindow = new MainWindow()

@@ -7,6 +7,8 @@ namespace BankApp.Services.Interfaces;
 
 public interface IAccountService
 {
-    Task<AccountModel?> GetAccountAsync(Guid accountId);
-    Task<List<CardModel>?> GetCardsAsync(Guid accountId);
+    Task<bool> LoginAsync(string email, string password);
+    Task<AccountModel?> GetMeAsync();
+    Task<List<AccountModel>?> GetAllAccountsAsync();
+    Task<List<CardModel>?> GetCardsAsync(int accountId);
 }

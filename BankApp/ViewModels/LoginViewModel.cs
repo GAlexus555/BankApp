@@ -1,8 +1,11 @@
 ﻿using BankApp.Commands;
+using BankApp.Models;
 using BankApp.Services;
+using BankApp.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Windows.Input;
 
@@ -11,7 +14,7 @@ namespace BankApp.ViewModels;
 public class LoginViewModel : ViewModelBase
 {
     //Properties
-    private string _username;
+    private string _username = "";
     public string Username
     {
         get => _username;
@@ -22,7 +25,7 @@ public class LoginViewModel : ViewModelBase
         }
     }
 
-    private string _password;
+    private string _password = "";
     public string Password
     {
         get => _password;
@@ -38,13 +41,26 @@ public class LoginViewModel : ViewModelBase
 
     //Navigation
     private NavigationService _navigationService;
+    // API
+    private IAccountService _accountService;
+    // Account
+    private AccountModel? _account;
 
-
-    public LoginViewModel(NavigationService navigationService)
+    public LoginViewModel(NavigationService navigationService, HttpClient client)
     {
         _navigationService = navigationService;
-        LoginCommand = new NavigateCommand(navigationService, () => new AccountViewModel(navigationService));
+        _accountService = new AccountService(client);
+
+        LoadAccount(_accountService);
+
+        LoginCommand = new NavigateCommand(_navigationService, () => new AccountViewModel(_navigationService, _account, client));
 
         Log.Debug("Created login view model");
+    }
+
+    private async void LoadAccount(IAccountService service)
+    {
+        await service.LoginAsync("alexei.galaburda@gmail.com", "password");
+        _account = await service.GetMeAsync();
     }
 }

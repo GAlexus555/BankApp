@@ -16,9 +16,9 @@ namespace BankApp.Views
     /// <summary>
     /// Interaction logic for Account.xaml
     /// </summary>
-    public partial class Account : UserControl
+    public partial class AccountView: UserControl
     {
-        public Account()
+        public AccountView()
         {
             InitializeComponent();
         }
