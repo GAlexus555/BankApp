@@ -1,0 +1,73 @@
+<Window x:Class="BankApp.Views.AddClientDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Neuer Kunde" Width="420" Height="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="LightBlue" Padding="15,12">
+            <TextBlock Text="Neuer Kunde anlegen" FontSize="18" FontWeight="SemiBold"/>
+        </Border>
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Name row -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Vorname" Margin="0,0,0,2"/>
+                    <TextBox x:Name="tbFirstName" Width="170"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Nachname" Margin="0,0,0,2"/>
+                    <TextBox x:Name="tbLastName" Width="170"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Email -->
+            <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                <TextBlock Text="E-Mail" Margin="0,0,0,2"/>
+                <TextBox x:Name="tbEmail"/>
+            </StackPanel>
+
+            <!-- Password -->
+            <StackPanel Grid.Row="2" Margin="0,0,0,10">
+                <TextBlock Text="Passwort (min. 8 Zeichen)" Margin="0,0,0,2"/>
+                <PasswordBox x:Name="pbPassword"/>
+            </StackPanel>
+
+            <!-- Phone -->
+            <StackPanel Grid.Row="3" Margin="0,0,0,10">
+                <TextBlock Text="Telefonnummer" Margin="0,0,0,2"/>
+                <TextBox x:Name="tbPhone"/>
+            </StackPanel>
+
+            <!-- Address -->
+            <StackPanel Grid.Row="4" Margin="0,0,0,10">
+                <TextBlock Text="Adresse" Margin="0,0,0,2"/>
+                <TextBox x:Name="tbAddress"/>
+            </StackPanel>
+
+            <!-- Birthdate -->
+            <StackPanel Grid.Row="5" Margin="0,0,0,10">
+                <TextBlock Text="Geburtsdatum" Margin="0,0,0,2"/>
+                <DatePicker x:Name="dpBirthdate"/>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Abbrechen" Width="100" Margin="0,0,8,0" Click="Cancel_Click"/>
+                <Button Content="Erstellen" Width="100" Background="LightBlue" Click="Create_Click"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>

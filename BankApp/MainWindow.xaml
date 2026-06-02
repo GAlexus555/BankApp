@@ -15,6 +15,18 @@
         <DataTemplate DataType="{x:Type vm:AccountViewModel}">
             <views:AccountView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TransactionViewModel}">
+            <views:TransactionView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ManagerViewModel}">
+            <views:ManagerView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ClientTransactionViewModel}">
+            <views:ClientTransactionView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MyTransactionsViewModel}">
+            <views:ClientTransactionView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>

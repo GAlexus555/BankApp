@@ -34,16 +34,14 @@ public class AccountService(HttpClient _client) : IAccountService
 
     public async Task<List<CardModel>?> GetCardsAsync(int accountId)
     {
-        var cards = new List<CardModel>()
-        {
-            new CardModel("AT06 6767 6767 6767", "0450678067676767", new DateTime(2026, 12, 31), 454)
-        };
-        return cards ?? new List<CardModel>();
+        var response = await _client.GetAsync("/cards/");
+        if (!response.IsSuccessStatusCode) return null;
+
+        return await response.Content.ReadFromJsonAsync<List<CardModel>>();
     }
 
     public async Task<AccountModel?> GetMeAsync()
     {
-        // Token is already set in DefaultRequestHeaders after login
         var response = await _client.GetAsync("/accounts/me");
         if (!response.IsSuccessStatusCode) return null;
 
@@ -56,5 +54,28 @@ public class AccountService(HttpClient _client) : IAccountService
         if (!response.IsSuccessStatusCode) return null;
 
         return await response.Content.ReadFromJsonAsync<List<AccountModel>>();
+    }
+
+    public async Task<bool> DeleteAccountAsync(int id)
+    {
+        var response = await _client.DeleteAsync($"/accounts/{id}");
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<AccountModel?> CreateAccountAsync(string firstName, string lastName, string email, string password, string phone, string address, DateTime birthdate)
+    {
+        var response = await _client.PostAsJsonAsync("/accounts/register", new
+        {
+            firstname = firstName,
+            lastname = lastName,
+            email = email,
+            password = password,
+            phonenumber = phone,
+            address = address,
+            birthdate = birthdate.ToString("yyyy-MM-dd"),
+            role = 0
+        });
+        if (!response.IsSuccessStatusCode) return null;
+        return await response.Content.ReadFromJsonAsync<AccountModel>();
     }
 }

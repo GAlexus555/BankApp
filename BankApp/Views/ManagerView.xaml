@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="BankApp.Views.ManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BankApp.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel Background="White">
+        <StackPanel Width="200" 
+                    DockPanel.Dock="Left"
+                    Background="LightBlue">
+            <Label Content="Bank Verwaltung"
+                   FontSize="20"/>
+            <Label Content="{Binding Name}"
+                   FontSize="15"/>
+            
+            <Menu Background="LightBlue">
+                <Menu.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </Menu.ItemsPanel>
+                <MenuItem Header="Kunden"
+                          Command="{Binding ShowClients}"/>
+                <MenuItem Header="Überweisungen"
+                          Command="{Binding ShowTransactions}"/>
+                <MenuItem Header="Sparzinsen"/>
+            </Menu>
+
+            <Separator Margin="5"/>
+
+            <Button Content="+ Kunde hinzufügen"
+                    Command="{Binding AddClientCommand}"
+                    Margin="5,2" Padding="6,4"/>
+            <Button Content="− Kunde löschen"
+                    Command="{Binding DeleteClientCommand}"
+                    Margin="5,2" Padding="6,4"/>
+            <Button Content="Transaktionen anzeigen"
+                    Command="{Binding ViewClientTransactionsCommand}"
+                    Margin="5,2" Padding="6,4"/>
+        </StackPanel>
+        <ListView Width="auto" ItemsSource="{Binding Collection}"
+                  SelectedItem="{Binding SelectedItem}">
+
+        </ListView>
+    </DockPanel>
+</UserControl>

@@ -11,4 +11,6 @@ public interface IAccountService
     Task<AccountModel?> GetMeAsync();
     Task<List<AccountModel>?> GetAllAccountsAsync();
     Task<List<CardModel>?> GetCardsAsync(int accountId);
+    Task<bool> DeleteAccountAsync(int id);
+    Task<AccountModel?> CreateAccountAsync(string firstName, string lastName, string email, string password, string phone, string address, DateTime birthdate);
 }

@@ -7,6 +7,7 @@ using System.Data;
 using System.Windows;
 using Serilog;
 using System.Net.Http;
+using BankApp.Models;
 
 namespace BankApp
 {
@@ -43,7 +44,7 @@ namespace BankApp
         /// Fires when app is starting
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnStartup(StartupEventArgs e)
+        protected async override void OnStartup(StartupEventArgs e)
         {
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // To DO: implement service collection and singletons and transients
@@ -59,8 +60,13 @@ namespace BankApp
                 BaseAddress = _apiAdress,
             };
 
-            // Mit login anfangen
-            _navigationStore.CurrentViewModel = new LoginViewModel(navService, client);
+            // Session aufrufen
+            var accountService = new AccountService(client);
+            AccountModel? account = await accountService.GetMeAsync();
+            if (account != null) _navigationStore.CurrentViewModel = new AccountViewModel(navService, account, client, accountService);
+
+            // Sonst mit login anfangen
+            else _navigationStore.CurrentViewModel = new LoginViewModel(navService, client);
 
             // Der view container erstellen
             MainWindow mainWindow = new MainWindow()
