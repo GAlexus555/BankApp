@@ -14,7 +14,7 @@
                    FontSize="20"/>
             <Label Content="{Binding Name}"
                    FontSize="15"/>
-            
+
             <Menu Background="LightBlue">
                 <Menu.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -35,6 +35,9 @@
                     Margin="5,2" Padding="6,4"/>
             <Button Content="− Kunde löschen"
                     Command="{Binding DeleteClientCommand}"
+                    Margin="5,2" Padding="6,4"/>
+            <Button Content="✎ Kunde bearbeiten"
+                    Command="{Binding EditClientCommand}"
                     Margin="5,2" Padding="6,4"/>
             <Button Content="Transaktionen anzeigen"
                     Command="{Binding ViewClientTransactionsCommand}"
