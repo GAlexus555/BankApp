@@ -28,14 +28,21 @@ namespace BankApp.Models
             throw new NotImplementedException();
         }
 
-        public void DeleteAccount() //
+        public void DeleteAccount(int id)
         {
-            throw new NotImplementedException();
+            Accounts?.RemoveAll(a => a.Id == id);
         }
 
-        public void UpdateAccount(AccountModel acc) //
+        public void UpdateAccount(AccountModel acc)
         {
-            throw new NotImplementedException();
+            var existing = Accounts?.FirstOrDefault(a => a.Id == acc.Id);
+            if (existing == null) return;
+
+            existing.FirstName = acc.FirstName;
+            existing.LastName = acc.LastName;
+            existing.Email = acc.Email;
+            existing.Phone = acc.Phone;
+            existing.Address = acc.Address;
         }
     }
 }
