@@ -25,7 +25,6 @@ public class AccountService(HttpClient _client) : IAccountService
         var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
         _token = result?.AccessToken;
 
-        // Setzt token für jeder zukünftige Http Request. Angenehmend :)
         _client.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
 
@@ -77,5 +76,18 @@ public class AccountService(HttpClient _client) : IAccountService
         });
         if (!response.IsSuccessStatusCode) return null;
         return await response.Content.ReadFromJsonAsync<AccountModel>();
+    }
+
+    public async Task<bool> UpdateAccountAsync(int id, string firstName, string lastName, string email, string phone, string address)
+    {
+        var response = await _client.PutAsJsonAsync($"/accounts/{id}", new
+        {
+            firstname = firstName,
+            lastname = lastName,
+            email = email,
+            phonenumber = phone,
+            address = address
+        });
+        return response.IsSuccessStatusCode;
     }
 }

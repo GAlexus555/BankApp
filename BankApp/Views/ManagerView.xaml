@@ -14,7 +14,7 @@
                    FontSize="20"/>
             <Label Content="{Binding Name}"
                    FontSize="15"/>
-            
+
             <Menu Background="LightBlue">
                 <Menu.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -36,13 +36,17 @@
             <Button Content="− Kunde löschen"
                     Command="{Binding DeleteClientCommand}"
                     Margin="5,2" Padding="6,4"/>
+            <Button Content="✎ Kunde bearbeiten"
+                    Command="{Binding EditClientCommand}"
+                    Margin="5,2" Padding="6,4"/>
             <Button Content="Transaktionen anzeigen"
                     Command="{Binding ViewClientTransactionsCommand}"
                     Margin="5,2" Padding="6,4"/>
         </StackPanel>
-        <ListView Width="auto" ItemsSource="{Binding Collection}"
+        <ListView Width="auto" DockPanel.Dock="Left" ItemsSource="{Binding Collection}"
                   SelectedItem="{Binding SelectedItem}">
 
         </ListView>
+        <local:ManagerCardsView/>
     </DockPanel>
 </UserControl>

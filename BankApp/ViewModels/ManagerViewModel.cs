@@ -29,6 +29,7 @@ namespace BankApp.ViewModels
                 _selectedItem = value;
                 OnPropertyChanged(nameof(SelectedItem));
                 DeleteClientCommand.NotifyCanExecuteChanged();
+                EditClientCommand.NotifyCanExecuteChanged();
                 ViewClientTransactionsCommand.NotifyCanExecuteChanged();
             }
         }
@@ -42,6 +43,7 @@ namespace BankApp.ViewModels
         public IRelayCommand ShowTransactions { get; }
         public IRelayCommand DeleteClientCommand { get; }
         public IRelayCommand AddClientCommand { get; }
+        public IRelayCommand EditClientCommand { get; }
         public IRelayCommand ViewClientTransactionsCommand { get; }
 
         public ManagerViewModel(NavigationService navigationService, IAccountService accountService, ITransactionService transactionService, HttpClient client)
@@ -56,6 +58,7 @@ namespace BankApp.ViewModels
             ShowTransactions = new AsyncRelayCommand(LoadTransactions);
             DeleteClientCommand = new AsyncRelayCommand(DeleteClient, CanDeleteClient);
             AddClientCommand = new AsyncRelayCommand(AddClient);
+            EditClientCommand = new AsyncRelayCommand(EditClient, CanDeleteClient);
             ViewClientTransactionsCommand = new RelayCommand(ViewClientTransactions, CanDeleteClient);
         }
 
@@ -67,11 +70,8 @@ namespace BankApp.ViewModels
                 MessageBox.Show("Failed to retrieve account data.");
                 return;
             }
-            account = await _accService.GetMeAsync();
 
             OnPropertyChanged(nameof(Name));
-
-            // Load clients
             LoadClients();
         }
 
@@ -121,6 +121,23 @@ namespace BankApp.ViewModels
 
             bool ok = await _accService.DeleteAccountAsync(client.Id);
             if (!ok) { MessageBox.Show("Löschen fehlgeschlagen."); return; }
+
+            await LoadClients();
+        }
+
+        private async Task EditClient()
+        {
+            if (SelectedItem is not AccountModel client) return;
+
+            var dialog = new EditClientDialog(client);
+            if (dialog.ShowDialog() != true) return;
+
+            bool ok = await _accService.UpdateAccountAsync(
+                client.Id,
+                dialog.FirstName, dialog.LastName,
+                dialog.Email, dialog.Phone, dialog.Address);
+
+            if (!ok) { MessageBox.Show("Bearbeiten fehlgeschlagen."); return; }
 
             await LoadClients();
         }
