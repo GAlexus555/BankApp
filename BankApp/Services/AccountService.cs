@@ -1,17 +1,14 @@
-﻿using BankApp.Models;
+using BankApp.Models;
 using BankApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 
 namespace BankApp.Services;
 
-public class AccountService(HttpClient _client) : IAccountService
+public class AccountService(HttpClient _client, ICardService _cardService) : IAccountService
 {
-    private string? _token;
-
     public async Task<bool> LoginAsync(string email, string password)
     {
         var form = new FormUrlEncodedContent([
@@ -23,12 +20,17 @@ public class AccountService(HttpClient _client) : IAccountService
         if (!response.IsSuccessStatusCode) return false;
 
         var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        _token = result?.AccessToken;
+        var token = result?.AccessToken;
 
         _client.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        return _token != null;
+        return token != null;
+    }
+
+    public void Logout()
+    {
+        _client.DefaultRequestHeaders.Authorization = null;
     }
 
     public async Task<AccountModel?> GetMeAsync()
@@ -36,7 +38,10 @@ public class AccountService(HttpClient _client) : IAccountService
         var response = await _client.GetAsync("/accounts/me");
         if (!response.IsSuccessStatusCode) return null;
 
-        return await response.Content.ReadFromJsonAsync<AccountModel>();
+        var account = await response.Content.ReadFromJsonAsync<AccountModel>();
+        if (account != null)
+            account.Cards = await _cardService.GetCardsAsync();
+        return account;
     }
 
     public async Task<List<AccountModel>?> GetAllAccountsAsync()

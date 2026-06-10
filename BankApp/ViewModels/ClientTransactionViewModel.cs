@@ -1,20 +1,14 @@
 using BankApp.Models;
 using BankApp.Services;
-using BankApp.Services.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Windows;
 
 namespace BankApp.ViewModels;
 
 public class ClientTransactionViewModel : ViewModelBase
 {
-    private readonly NavigationService _navService;
-    private readonly IAccountService _accService;
-    private readonly ITransactionService _trService;
-    private readonly ICardService _cardService;
-    private readonly HttpClient _client;
+    private readonly AppServices _services;
 
     public string ClientName { get; }
     public string ClientEmail { get; }
@@ -28,31 +22,20 @@ public class ClientTransactionViewModel : ViewModelBase
 
     public IRelayCommand BackCommand { get; }
 
-    public ClientTransactionViewModel(NavigationService navService, AccountModel client, IAccountService accService, ITransactionService trService, ICardService cardService, HttpClient httpClient)
+    public ClientTransactionViewModel(AppServices services, AccountModel client)
     {
-        _navService = navService;
-        _accService = accService;
-        _trService = trService;
-        _cardService = cardService;
-        _client = httpClient;
-
+        _services = services;
         ClientName = $"{client.FirstName} {client.LastName}";
         ClientEmail = client.Email;
 
-        BackCommand = new RelayCommand(() =>
-            navService.Navigate(new ManagerViewModel(navService, accService, trService, cardService, httpClient)));
-
+        BackCommand = new RelayCommand(() => services.NavigationService.Navigate(new ManagerViewModel(services)));
         LoadTransactions(client.Id);
     }
 
     private async void LoadTransactions(int accountId)
     {
-        var result = await _trService.GetTransactionsByAccountId(accountId);
-        if (result == null)
-        {
-            MessageBox.Show("Transaktionen konnten nicht geladen werden.");
-            return;
-        }
+        var result = await _services.TransactionService.GetTransactionsByAccountId(accountId);
+        if (result == null) { MessageBox.Show("Transaktionen konnten nicht geladen werden."); return; }
         Transactions = result;
     }
 }

@@ -1,25 +1,19 @@
-﻿using BankApp.Models;
+using BankApp.Models;
 using BankApp.Services;
-using BankApp.Services.Interfaces;
 using BankApp.Views;
 using CommunityToolkit.Mvvm.Input;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net.Http;
-using System.Text;
+using System.Linq;
 using System.Windows;
 
 namespace BankApp.ViewModels
 {
     public class ManagerViewModel : ViewModelBase
     {
-        private AccountModel account;
-        private NavigationService _navService;
-        private IAccountService _accService;
-        private ITransactionService _trService;
-        private ICardService _cardService;
-        private HttpClient _client;
+        private readonly AppServices _services;
+        private AccountModel _account;
+        private List<CardModel> _allCards = new();
 
         private object? _selectedItem;
         public object? SelectedItem
@@ -32,11 +26,14 @@ namespace BankApp.ViewModels
                 DeleteClientCommand.NotifyCanExecuteChanged();
                 EditClientCommand.NotifyCanExecuteChanged();
                 ViewClientTransactionsCommand.NotifyCanExecuteChanged();
+                AddCardCommand.NotifyCanExecuteChanged();
+                UpdateSelectedCards();
             }
         }
 
-        public string Name { get => account == null ? "Loading..." : $"{account.FirstName} {account.LastName}"; }
+        public string Name => _account == null ? "Loading..." : $"{_account.FirstName} {_account.LastName}";
         public List<object> Collection { get; set; }
+        public ObservableCollection<CardModel> SelectedCards { get; } = new();
         private List<AccountModel> Clients { get; set; }
         private List<TransactionModel> Transactions { get; set; }
 
@@ -46,101 +43,105 @@ namespace BankApp.ViewModels
         public IRelayCommand AddClientCommand { get; }
         public IRelayCommand EditClientCommand { get; }
         public IRelayCommand ViewClientTransactionsCommand { get; }
+        public IRelayCommand AddCardCommand { get; }
+        public IRelayCommand LogoutCommand { get; }
 
-        public ManagerViewModel(NavigationService navigationService, IAccountService accountService, ITransactionService transactionService, ICardService cardSevice, HttpClient client)
+        public ManagerViewModel(AppServices services)
         {
-            _navService = navigationService;
-            _accService = accountService;
-            _trService = transactionService;
-            _cardService = cardSevice;
-            _client = client;
+            _services = services;
             LoadAccount();
 
             ShowClients = new AsyncRelayCommand(LoadClients);
             ShowTransactions = new AsyncRelayCommand(LoadTransactions);
-            DeleteClientCommand = new AsyncRelayCommand(DeleteClient, CanDeleteClient);
+            DeleteClientCommand = new AsyncRelayCommand(DeleteClient, CanSelectClient);
             AddClientCommand = new AsyncRelayCommand(AddClient);
-            EditClientCommand = new AsyncRelayCommand(EditClient, CanDeleteClient);
-            ViewClientTransactionsCommand = new RelayCommand(ViewClientTransactions, CanDeleteClient);
+            EditClientCommand = new AsyncRelayCommand(EditClient, CanSelectClient);
+            ViewClientTransactionsCommand = new RelayCommand(ViewClientTransactions, CanSelectClient);
+            AddCardCommand = new AsyncRelayCommand(AddCard, CanSelectClient);
+            LogoutCommand = new RelayCommand(() =>
+            {
+                _services.AccountService.Logout();
+                _services.NavigationService.Navigate(new LoginViewModel(_services));
+            });
         }
 
         private async void LoadAccount()
         {
-            account = await _accService.GetMeAsync();
-            if (account == null)
-            {
-                MessageBox.Show("Failed to retrieve account data.");
-                return;
-            }
-
+            _account = await _services.AccountService.GetMeAsync();
+            if (_account == null) { MessageBox.Show("Failed to retrieve account data."); return; }
             OnPropertyChanged(nameof(Name));
-            LoadClients();
+            await LoadClients();
         }
 
         private async Task LoadClients()
         {
-            Clients = await _accService.GetAllAccountsAsync();
-            Collection = new List<object>();
-            foreach (var client in Clients)
+            Clients = await _services.AccountService.GetAllAccountsAsync() ?? new();
+
+            var cardTasks = Clients.Select(c => _services.CardService.GetCardsByAccountIdAsync(c.Id));
+            var results = await Task.WhenAll(cardTasks);
+
+            _allCards = new();
+            for (int i = 0; i < Clients.Count; i++)
             {
-                Collection.Add(client);
+                var cards = results[i] ?? new();
+                Clients[i].Cards = cards;
+                _allCards.AddRange(cards);
             }
+
+            Collection = new List<object>(Clients.Cast<object>());
             OnPropertyChanged(nameof(Collection));
+            UpdateSelectedCards();
         }
 
         private async Task LoadTransactions()
         {
-            Transactions = await _trService.GetAllTransactions();
-            if (Transactions == null)
-            {
-                MessageBox.Show("Failed to load transactions.");
-                return;
-            }
-            Collection = new List<object>();
-            foreach (var transaction in Transactions)
-            {
-                Collection.Add(transaction);
-            }
+            Transactions = await _services.TransactionService.GetAllTransactions();
+            if (Transactions == null) { MessageBox.Show("Failed to load transactions."); return; }
+            Collection = new List<object>(Transactions.Cast<object>());
             OnPropertyChanged(nameof(Collection));
         }
 
-        private bool CanDeleteClient() => SelectedItem is AccountModel;
+        private void UpdateSelectedCards()
+        {
+            SelectedCards.Clear();
+            if (SelectedItem is AccountModel client)
+            {
+                foreach (var card in _allCards.Where(c => c.OwnerId == client.Id))
+                    SelectedCards.Add(card);
+            }
+        }
+
+        private bool CanSelectClient() => SelectedItem is AccountModel;
 
         private void ViewClientTransactions()
         {
             if (SelectedItem is not AccountModel client) return;
-            _navService.Navigate(new ClientTransactionViewModel(_navService, client, _accService, _trService, _cardService, _client));
+            _services.NavigationService.Navigate(new ClientTransactionViewModel(_services, client));
         }
 
         private async Task DeleteClient()
         {
             if (SelectedItem is not AccountModel client) return;
-
             var confirm = MessageBox.Show(
                 $"Konto von {client.FirstName} {client.LastName} wirklich löschen?",
                 "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
-            bool ok = await _accService.DeleteAccountAsync(client.Id);
+            bool ok = await _services.AccountService.DeleteAccountAsync(client.Id);
             if (!ok) { MessageBox.Show("Löschen fehlgeschlagen."); return; }
-
             await LoadClients();
         }
 
         private async Task EditClient()
         {
             if (SelectedItem is not AccountModel client) return;
-
             var dialog = new EditClientDialog(client);
             if (dialog.ShowDialog() != true) return;
 
-            bool ok = await _accService.UpdateAccountAsync(
-                client.Id,
-                dialog.FirstName, dialog.LastName,
+            bool ok = await _services.AccountService.UpdateAccountAsync(
+                client.Id, dialog.FirstName, dialog.LastName,
                 dialog.Email, dialog.Phone, dialog.Address);
-
             if (!ok) { MessageBox.Show("Bearbeiten fehlgeschlagen."); return; }
-
             await LoadClients();
         }
 
@@ -149,12 +150,23 @@ namespace BankApp.ViewModels
             var dialog = new AddClientDialog();
             if (dialog.ShowDialog() != true) return;
 
-            var result = await _accService.CreateAccountAsync(
+            var result = await _services.AccountService.CreateAccountAsync(
                 dialog.FirstName, dialog.LastName, dialog.Email,
                 dialog.Password, dialog.Phone, dialog.Address, dialog.Birthdate);
-
             if (result == null) { MessageBox.Show("Kunde konnte nicht erstellt werden."); return; }
+            await LoadClients();
+        }
 
+        private async Task AddCard()
+        {
+            if (SelectedItem is not AccountModel client) return;
+            var dialog = new AddCardDialog();
+            if (dialog.ShowDialog() != true) return;
+
+            var result = await _services.CardService.CreateCardAsync(
+                dialog.InitialCents, CardStatus.Inactive, client.Id,
+                dialog.IBAN, dialog.CardNr, dialog.CVC, dialog.ExpireDate);
+            if (result == null) { MessageBox.Show("Karte konnte nicht erstellt werden."); return; }
             await LoadClients();
         }
     }

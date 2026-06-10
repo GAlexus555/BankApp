@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using System.Text.Json.Serialization;
 
 namespace BankApp.Models;
@@ -15,29 +13,24 @@ public enum CardStatus
 
 public class CardModel
 {
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
     [JsonPropertyName("cents")]
-    public int Cents { get; }
+    public int Cents { get; set; }
     [JsonPropertyName("status")]
-    public CardStatus CardStatus { get; }
+    public CardStatus CardStatus { get; set; }
+    [JsonPropertyName("owner_id")]
+    public int OwnerId { get; set; }
     [JsonPropertyName("iban")]
-    public string IBAN { get; }
+    public string IBAN { get; set; } = "";
     [JsonPropertyName("card_nr")]
-    public string CardNr { get; }
+    public string CardNr { get; set; } = "";
     [JsonPropertyName("expire_date")]
-    public DateTime ExpireDate { get; }
+    public DateTime ExpireDate { get; set; }
     [JsonPropertyName("created_at")]
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; set; }
     [JsonPropertyName("cvc")]
-    public int CVC { get; }
+    public int CVC { get; set; }
 
-    private int _pin;
-
-    public CardModel(int cents, string iban, string cardNr, DateTime expireDate, int cvc)
-    {
-        Cents = cents;
-        IBAN = iban;
-        CardNr = cardNr;
-        ExpireDate = expireDate;
-        CVC = cvc;
-    }
+    public string DisplayBalance => $"€ {Cents / 100.0:F2}";
 }

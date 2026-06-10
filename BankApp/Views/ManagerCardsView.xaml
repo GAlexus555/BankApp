@@ -1,25 +1,89 @@
-﻿<UserControl x:Class="BankApp.Views.ManagerCardsView"
+<UserControl x:Class="BankApp.Views.ManagerCardsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BankApp.Views"
-             xmlns:vm="clr-namespace:BankApp.ViewModels"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="400">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:BankApp.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="380">
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type vm:CardViewModel}">
-            <local:CardView/>
+        <DataTemplate DataType="{x:Type models:CardModel}">
+            <Border Margin="0,0,0,8" CornerRadius="10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1A56DB" Offset="0"/>
+                        <GradientStop Color="#1E40AF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="2" Color="#1A56DB"/>
+                </Border.Effect>
+                <Grid Margin="14,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="{Binding IBAN}" FontWeight="SemiBold" FontSize="12"
+                                   Foreground="White" FontFamily="Courier New"/>
+                        <TextBlock FontSize="11" Foreground="#BFDBFE" Margin="0,3,0,0">
+                            <Run Text="{Binding CardNr}"/>
+                            <Run Text=" · CVC: "/>
+                            <Run Text="{Binding CVC}"/>
+                            <Run Text=" · "/>
+                            <Run Text="{Binding CardStatus}"/>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ExpireDate, StringFormat='Läuft ab: {0:MM/yyyy}'}"
+                                   FontSize="10" Foreground="#93C5FD" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding DisplayBalance}"
+                               VerticalAlignment="Center" FontSize="15" FontWeight="Bold"
+                               Foreground="White"/>
+                </Grid>
+            </Border>
         </DataTemplate>
     </UserControl.Resources>
-    
-    <Grid Background="White">
-        <ItemsControl ItemsSource="{Binding Cards}" Grid.Row="1">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </Grid>
+
+    <DockPanel Background="{StaticResource BackgroundBrush}">
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Padding="16,12">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1A56DB" Offset="0"/>
+                    <GradientStop Color="#1E40AF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Text="Karten" Foreground="White"
+                           FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <Border DockPanel.Dock="Right" Background="#FFFFFF26" CornerRadius="12"
+                        Padding="8,3" VerticalAlignment="Center">
+                    <TextBlock Foreground="White" FontSize="11" FontWeight="SemiBold">
+                        <Run Text="{Binding SelectedCards.Count, Mode=OneWay}"/>
+                        <Run Text="Karte(n)"/>
+                    </TextBlock>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <!-- Add button -->
+        <Border DockPanel.Dock="Bottom" Background="White" Padding="12,10"
+                BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
+            <Button Content="＋  Karte hinzufügen"
+                    Command="{Binding AddCardCommand}"
+                    HorizontalAlignment="Stretch"
+                    Padding="0,9"/>
+        </Border>
+
+        <!-- Card list -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="White" Padding="12,8">
+            <ItemsControl ItemsSource="{Binding SelectedCards}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
 </UserControl>

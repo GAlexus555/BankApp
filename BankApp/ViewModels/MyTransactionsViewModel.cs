@@ -1,19 +1,15 @@
 using BankApp.Models;
 using BankApp.Services;
-using BankApp.Services.Interfaces;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Windows;
 
 namespace BankApp.ViewModels;
 
 public class MyTransactionsViewModel : ViewModelBase
 {
-    private readonly NavigationService _navService;
+    private readonly AppServices _services;
     private readonly AccountModel _account;
-    private readonly IAccountService _accService;
-    private readonly HttpClient _client;
 
     public string ClientName { get; }
     public string ClientEmail { get; }
@@ -27,30 +23,23 @@ public class MyTransactionsViewModel : ViewModelBase
 
     public IRelayCommand BackCommand { get; }
 
-    public MyTransactionsViewModel(NavigationService navService, AccountModel account, IAccountService accService, ITransactionService trService, HttpClient client)
+    public MyTransactionsViewModel(AppServices services, AccountModel account)
     {
-        _navService = navService;
+        _services = services;
         _account = account;
-        _accService = accService;
-        _client = client;
-
         ClientName = $"{account.FirstName} {account.LastName}";
         ClientEmail = account.Email;
 
         BackCommand = new RelayCommand(() =>
-            navService.Navigate(new AccountViewModel(navService, account, client, accService)));
+            services.NavigationService.Navigate(new AccountViewModel(services, account)));
 
-        LoadTransactions(trService);
+        LoadTransactions();
     }
 
-    private async void LoadTransactions(ITransactionService trService)
+    private async void LoadTransactions()
     {
-        var result = await trService.GetMyTransactions();
-        if (result == null)
-        {
-            MessageBox.Show("Transaktionen konnten nicht geladen werden.");
-            return;
-        }
+        var result = await _services.TransactionService.GetMyTransactions();
+        if (result == null) { MessageBox.Show("Transaktionen konnten nicht geladen werden."); return; }
         Transactions = result;
     }
 }
