@@ -22,7 +22,7 @@
         </Border>
 
         <!-- Transaction count -->
-        <Border DockPanel.Dock="Top" Background="#F0F0F0" Padding="15,6">
+        <Border DockPanel.Dock="Top" Background="LightGray" Padding="15,6">
             <TextBlock FontSize="12" Foreground="#555">
                 <Run Text="{Binding Transactions.Count, Mode=OneWay}"/>
                 <Run Text="Transaktion(en)"/>

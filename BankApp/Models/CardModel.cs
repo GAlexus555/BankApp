@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace BankApp.Models;
 
-public enum Status
+public enum CardStatus
 {
     Active,
     Inactive,
@@ -18,7 +18,7 @@ public class CardModel
     [JsonPropertyName("cents")]
     public int Cents { get; }
     [JsonPropertyName("status")]
-    public Status CardStatus { get; }
+    public CardStatus CardStatus { get; }
     [JsonPropertyName("iban")]
     public string IBAN { get; }
     [JsonPropertyName("card_nr")]

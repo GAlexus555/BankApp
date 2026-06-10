@@ -47,7 +47,7 @@
                VerticalAlignment="Center"
                HorizontalAlignment="Right"
                Margin="10 0" FontSize="20"/>
-        <Button Content="Züruck"
+        <Button Content="Zurück"
                 Width="100"
                 Grid.Row="5" Grid.Column="0"
                 HorizontalAlignment="Center"

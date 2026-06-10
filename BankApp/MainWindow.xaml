@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:BankApp.ViewModels"
         xmlns:views="clr-namespace:BankApp.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="BankApp" Height="450" Width="800">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView/>
