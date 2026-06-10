@@ -18,6 +18,7 @@ namespace BankApp.ViewModels
         private NavigationService _navService;
         private IAccountService _accService;
         private ITransactionService _trService;
+        private ICardService _cardService;
         private HttpClient _client;
 
         private object? _selectedItem;
@@ -46,11 +47,12 @@ namespace BankApp.ViewModels
         public IRelayCommand EditClientCommand { get; }
         public IRelayCommand ViewClientTransactionsCommand { get; }
 
-        public ManagerViewModel(NavigationService navigationService, IAccountService accountService, ITransactionService transactionService, HttpClient client)
+        public ManagerViewModel(NavigationService navigationService, IAccountService accountService, ITransactionService transactionService, ICardService cardSevice, HttpClient client)
         {
             _navService = navigationService;
             _accService = accountService;
             _trService = transactionService;
+            _cardService = cardSevice;
             _client = client;
             LoadAccount();
 
@@ -107,7 +109,7 @@ namespace BankApp.ViewModels
         private void ViewClientTransactions()
         {
             if (SelectedItem is not AccountModel client) return;
-            _navService.Navigate(new ClientTransactionViewModel(_navService, client, _accService, _trService, _client));
+            _navService.Navigate(new ClientTransactionViewModel(_navService, client, _accService, _trService, _cardService, _client));
         }
 
         private async Task DeleteClient()

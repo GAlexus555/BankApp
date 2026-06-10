@@ -31,14 +31,6 @@ public class AccountService(HttpClient _client) : IAccountService
         return _token != null;
     }
 
-    public async Task<List<CardModel>?> GetCardsAsync(int accountId)
-    {
-        var response = await _client.GetAsync("/cards/");
-        if (!response.IsSuccessStatusCode) return null;
-
-        return await response.Content.ReadFromJsonAsync<List<CardModel>>();
-    }
-
     public async Task<AccountModel?> GetMeAsync()
     {
         var response = await _client.GetAsync("/accounts/me");

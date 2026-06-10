@@ -13,6 +13,7 @@ public class ClientTransactionViewModel : ViewModelBase
     private readonly NavigationService _navService;
     private readonly IAccountService _accService;
     private readonly ITransactionService _trService;
+    private readonly ICardService _cardService;
     private readonly HttpClient _client;
 
     public string ClientName { get; }
@@ -27,18 +28,19 @@ public class ClientTransactionViewModel : ViewModelBase
 
     public IRelayCommand BackCommand { get; }
 
-    public ClientTransactionViewModel(NavigationService navService, AccountModel client, IAccountService accService, ITransactionService trService, HttpClient httpClient)
+    public ClientTransactionViewModel(NavigationService navService, AccountModel client, IAccountService accService, ITransactionService trService, ICardService cardService, HttpClient httpClient)
     {
         _navService = navService;
         _accService = accService;
         _trService = trService;
+        _cardService = cardService;
         _client = httpClient;
 
         ClientName = $"{client.FirstName} {client.LastName}";
         ClientEmail = client.Email;
 
         BackCommand = new RelayCommand(() =>
-            navService.Navigate(new ManagerViewModel(navService, accService, trService, httpClient)));
+            navService.Navigate(new ManagerViewModel(navService, accService, trService, cardService, httpClient)));
 
         LoadTransactions(client.Id);
     }

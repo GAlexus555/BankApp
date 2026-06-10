@@ -2,11 +2,12 @@
 using BankApp.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 
 namespace BankApp.Services;
 
-public class CardService : ICardService
+public class CardService(HttpClient client) : ICardService
 {
     public Task<CardModel> CreateCardAsync(int amountCents, CardStatus status, int ownerId, string iban, int cardNr, int cvc, DateTime expireDate)
     {

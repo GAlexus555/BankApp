@@ -46,6 +46,7 @@ public class LoginViewModel : ViewModelBase
     // API
     private IAccountService _accountService;
     private ITransactionService _transactionService;
+    private ICardService _cardService;
     private HttpClient _client;
     // Account
     private AccountModel? _account;
@@ -55,6 +56,7 @@ public class LoginViewModel : ViewModelBase
         _navigationService = navigationService;
         _accountService = new AccountService(client);
         _transactionService = new TransactionService(client);
+        _cardService = new CardService(client);
         _client = client;
 
         LoginCommand = new AsyncRelayCommand(LoginAccount);
@@ -82,7 +84,7 @@ public class LoginViewModel : ViewModelBase
 
         if (account.Role == AccountRole.Manager)
         {
-            _navigationService.Navigate(new ManagerViewModel(_navigationService, _accountService, _transactionService, _client));
+            _navigationService.Navigate(new ManagerViewModel(_navigationService, _accountService, _transactionService, _cardService, _client));
         }
         else
         {
