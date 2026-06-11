@@ -11,6 +11,7 @@ public class AppServices
     public ICardService CardService { get; }
     public IAccountService AccountService { get; }
     public ITransactionService TransactionService { get; }
+    public IInterestService InterestsService { get; }
     public NavigationService NavigationService { get; }
 
     public AppServices(string baseUrl, NavigationStore navigationStore)
@@ -19,6 +20,7 @@ public class AppServices
         CardService = new CardService(HttpClient);
         AccountService = new AccountService(HttpClient, CardService);
         TransactionService = new TransactionService(HttpClient);
+        InterestsService = new InterestService(HttpClient);
         NavigationService = new NavigationService(navigationStore);
     }
 }

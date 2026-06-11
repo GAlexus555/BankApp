@@ -77,6 +77,8 @@ namespace BankApp.ViewModels
         {
             Clients = await _services.AccountService.GetAllAccountsAsync() ?? new();
 
+            // List<InterestModel> ii = await _services.InterestsService.GetAllInterestsAsync();
+
             var cardTasks = Clients.Select(c => _services.CardService.GetCardsByAccountIdAsync(c.Id));
             var results = await Task.WhenAll(cardTasks);
 
