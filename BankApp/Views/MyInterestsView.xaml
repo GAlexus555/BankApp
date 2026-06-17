@@ -1,0 +1,168 @@
+<UserControl x:Class="BankApp.Views.MyInterestsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:BankApp.ViewModels"
+             xmlns:models="clr-namespace:BankApp.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <DockPanel Background="{StaticResource BackgroundBrush}">
+
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Height="64">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1A56DB" Offset="0"/>
+                    <GradientStop Color="#1E40AF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <DockPanel Margin="12,0">
+                <Button DockPanel.Dock="Left" Content="←"
+                        Style="{StaticResource HeaderButton}"
+                        Command="{Binding BackCommand}"
+                        FontSize="18" Width="44" Height="44"
+                        VerticalAlignment="Center"/>
+                <TextBlock DockPanel.Dock="Left"
+                           Text="{Binding BankHeader}"
+                           Foreground="White" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center" Margin="8,0,0,0"/>
+                <Button DockPanel.Dock="Right" Content="＋  Neu anlegen"
+                        Style="{StaticResource HeaderButton}"
+                        Command="{Binding CreateCommand}"
+                        FontSize="13" Height="36"
+                        VerticalAlignment="Center" Margin="0,0,4,0"/>
+            </DockPanel>
+        </Border>
+
+        <!-- List -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="16">
+            <ItemsControl ItemsSource="{Binding Interests}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:InterestModel}">
+                        <Border Margin="0,0,0,12" Padding="20,16"
+                                CornerRadius="12" Background="White"
+                                BorderThickness="1" BorderBrush="#E2E8F0">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#1A56DB" BlurRadius="16"
+                                                  ShadowDepth="2" Opacity="0.10"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left info -->
+                                <StackPanel Grid.Column="0">
+                                    <!-- Top row: card id + status -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <TextBlock Text="{Binding DisplayCardId}"
+                                                   FontSize="13" FontWeight="SemiBold"
+                                                   Foreground="#1E293B"/>
+                                        <Border Margin="8,0,0,0" Padding="6,2" CornerRadius="4">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#DCFCE7"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Withdrawn}" Value="True">
+                                                            <Setter Property="Background" Value="#F1F5F9"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding StatusText}" FontSize="11" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#16A34A"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Withdrawn}" Value="True">
+                                                                <Setter Property="Foreground" Value="#64748B"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Values grid -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Eingelegt"
+                                                   FontSize="10" Foreground="#94A3B8"/>
+                                        <TextBlock Grid.Column="2" Grid.Row="0" Text="Aktueller Wert"
+                                                   FontSize="10" Foreground="#94A3B8"/>
+                                        <TextBlock Grid.Column="4" Grid.Row="0" Text="Zinsen p.a."
+                                                   FontSize="10" Foreground="#94A3B8"/>
+
+                                        <TextBlock Grid.Column="0" Grid.Row="1"
+                                                   Text="{Binding DisplayInvested}"
+                                                   FontSize="15" FontWeight="Bold" Foreground="#1E293B"/>
+                                        <TextBlock Grid.Column="2" Grid.Row="1"
+                                                   Text="{Binding DisplayCurrentValue}"
+                                                   FontSize="15" FontWeight="Bold" Foreground="#1A56DB"/>
+                                        <TextBlock Grid.Column="4" Grid.Row="1"
+                                                   Text="{Binding DisplayRate}"
+                                                   FontSize="15" FontWeight="Bold" Foreground="#059669"/>
+                                    </Grid>
+
+                                    <TextBlock Text="{Binding DisplayDate}"
+                                               FontSize="11" Foreground="#94A3B8" Margin="0,8,0,0"/>
+                                </StackPanel>
+
+                                <!-- Withdraw button -->
+                                <Button Grid.Column="1"
+                                        Content="Auszahlen"
+                                        VerticalAlignment="Center"
+                                        Padding="14,8"
+                                        FontSize="12"
+                                        Command="{Binding DataContext.WithdrawCommand,
+                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Withdrawn}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

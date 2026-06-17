@@ -12,40 +12,76 @@ public class CardService(HttpClient _client) : ICardService
 {
     public async Task<List<CardModel>?> GetCardsAsync()
     {
-        var response = await _client.GetAsync("/cards/");
-        if (!response.IsSuccessStatusCode) return null;
-        return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        try
+        {
+            var response = await _client.GetAsync("/cards/");
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        }
+        catch (HttpRequestException) { return null; }
     }
 
     public async Task<List<CardModel>?> GetCardsByAccountIdAsync(int accountId)
     {
-        var response = await _client.GetAsync($"/cards/{accountId}");
-        if (!response.IsSuccessStatusCode) return null;
-        return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        try
+        {
+            var response = await _client.GetAsync($"/cards/{accountId}");
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        }
+        catch (HttpRequestException) { return null; }
     }
 
     public async Task<List<CardModel>?> GetAllCardsAsync()
     {
-        var response = await _client.GetAsync("/cards/all/");
-        if (!response.IsSuccessStatusCode) return null;
-        return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        try
+        {
+            var response = await _client.GetAsync("/cards/all");
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<List<CardModel>>();
+        }
+        catch (HttpRequestException) { return null; }
     }
 
     public async Task<CardModel?> CreateCardAsync(int amountCents, CardStatus status, int ownerId, string iban, string cardNr, int cvc, DateTime expireDate)
     {
-        var response = await _client.PostAsJsonAsync("/cards/", new
+        try
         {
-            cents = amountCents,
-            status = (int)status,
-            owner_id = ownerId,
-            iban = iban,
-            card_nr = cardNr,
-            cvc = cvc,
-            expire_date = expireDate.ToString("yyyy-MM-dd")
-        });
-        var body = await response.Content.ReadAsStringAsync();
-        Debug.WriteLine($"POST /cards/ → {response.StatusCode}: {body}");
-        if (!response.IsSuccessStatusCode) return null;
-        return System.Text.Json.JsonSerializer.Deserialize<CardModel>(body);
+            var response = await _client.PostAsJsonAsync("/cards/", new
+            {
+                cents = amountCents,
+                status = (int)status,
+                owner_id = ownerId,
+                iban = iban,
+                card_nr = cardNr,
+                cvc = cvc,
+                expire_date = expireDate.ToString("yyyy-MM-dd")
+            });
+            var body = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"POST /cards/ → {response.StatusCode}: {body}");
+            if (!response.IsSuccessStatusCode) return null;
+            return System.Text.Json.JsonSerializer.Deserialize<CardModel>(body);
+        }
+        catch (HttpRequestException) { return null; }
+    }
+
+    public async Task<bool> UpdateCardStatusAsync(int cardId, CardStatus status)
+    {
+        try
+        {
+            var response = await _client.PutAsJsonAsync($"/cards/{cardId}", new { status = (int)status });
+            return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException) { return false; }
+    }
+
+    public async Task<bool> DeleteCardAsync(int cardId)
+    {
+        try
+        {
+            var response = await _client.DeleteAsync($"/cards/{cardId}");
+            return response.IsSuccessStatusCode;
+        }
+        catch (HttpRequestException) { return false; }
     }
 }

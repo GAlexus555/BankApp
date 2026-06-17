@@ -1,0 +1,104 @@
+<UserControl x:Class="BankApp.Views.ManagerInterestsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:BankApp.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#F1F5F9"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border x:Name="bd" Background="White"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <GridViewRowPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#EFF6FF"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#DBEAFE"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <QuadraticEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <DockPanel Background="{StaticResource BackgroundBrush}">
+
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Height="64">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1A56DB" Offset="0"/>
+                    <GradientStop Color="#1E40AF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <DockPanel Margin="12,0">
+                <Button DockPanel.Dock="Left" Content="←"
+                        Style="{StaticResource HeaderButton}"
+                        Command="{Binding BackCommand}"
+                        FontSize="18" Width="44" Height="44"
+                        VerticalAlignment="Center"/>
+                <TextBlock DockPanel.Dock="Left" Text="Alle Sparguthaben"
+                           Foreground="White" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center" Margin="8,0,0,0"/>
+                <Border DockPanel.Dock="Left" Background="#FFFFFF51" CornerRadius="10"
+                        Padding="8,3" Margin="10,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Interests.Count}" Foreground="White"
+                               FontSize="12" FontWeight="Bold"/>
+                </Border>
+            </DockPanel>
+        </Border>
+
+        <!-- Table -->
+        <ListView ItemsSource="{Binding Interests}" BorderThickness="0"
+                  Background="Transparent" Margin="16">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Karte" Width="180"
+                                    DisplayMemberBinding="{Binding DisplayCardId}"/>
+                    <GridViewColumn Header="Eingelegt" Width="110"
+                                    DisplayMemberBinding="{Binding DisplayInvested}"/>
+                    <GridViewColumn Header="Aktueller Wert" Width="120"
+                                    DisplayMemberBinding="{Binding DisplayCurrentValue}"/>
+                    <GridViewColumn Header="Wachstum" Width="110"
+                                    DisplayMemberBinding="{Binding DisplayGrowth}"/>
+                    <GridViewColumn Header="Zinsen p.a." Width="100"
+                                    DisplayMemberBinding="{Binding DisplayRate}"/>
+                    <GridViewColumn Header="Seit" Width="100"
+                                    DisplayMemberBinding="{Binding DisplayDate}"/>
+                    <GridViewColumn Header="Status" Width="90"
+                                    DisplayMemberBinding="{Binding StatusText}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</UserControl>

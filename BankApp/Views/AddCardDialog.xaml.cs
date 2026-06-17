@@ -57,5 +57,5 @@ public partial class AddCardDialog : Window
         iban.Length >= 15 && iban.Length <= 34 && Regex.IsMatch(iban, @"^[A-Z]{2}[A-Z0-9]+$", RegexOptions.IgnoreCase);
 
     private static bool IsValidCardNr(string cardNr) =>
-        cardNr.Length >= 8 && cardNr.Length <= 19 && Regex.IsMatch(cardNr, @"^\d+$");
+        cardNr.Length >= 13 && cardNr.Length <= 16 && Regex.IsMatch(cardNr, @"^\d+$");
 }

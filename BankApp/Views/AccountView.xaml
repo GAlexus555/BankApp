@@ -49,6 +49,16 @@
                         Command="{Binding ShowTransactionsCommand}"
                         FontSize="13"
                         VerticalAlignment="Center"/>
+                <Button DockPanel.Dock="Left" Content="Sparzinsen"
+                        Style="{StaticResource HeaderButton}"
+                        Command="{Binding ShowInterestsCommand}"
+                        FontSize="13" Margin="4,0,0,0"
+                        VerticalAlignment="Center"/>
+                <Button DockPanel.Dock="Left" Content="✎  Profil"
+                        Style="{StaticResource HeaderButton}"
+                        Command="{Binding EditProfileCommand}"
+                        FontSize="13" Margin="4,0,0,0"
+                        VerticalAlignment="Center"/>
                 <Button DockPanel.Dock="Right" Content="⏻"
                         Style="{StaticResource HeaderButton}"
                         Command="{Binding LogoutCommand}"

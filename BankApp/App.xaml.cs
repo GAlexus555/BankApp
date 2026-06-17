@@ -27,6 +27,17 @@ namespace BankApp
 
             var services = new AppServices("http://127.0.0.1:8000", _navigationStore);
 
+            UnauthorizedHandler.Unauthorized += () =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    services.AccountService.Logout();
+                    MessageBox.Show("Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+                        "Sitzung abgelaufen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    _navigationStore.CurrentViewModel = new LoginViewModel(services);
+                });
+            };
+
             var account = await services.AccountService.GetMeAsync();
             if (account != null)
                 _navigationStore.CurrentViewModel = new AccountViewModel(services, account);

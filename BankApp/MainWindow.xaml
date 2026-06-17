@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:BankApp.ViewModels"
         xmlns:views="clr-namespace:BankApp.Views"
         mc:Ignorable="d"
-        Title="BankApp" Height="450" Width="800">
+        Title="BankApp" Height="700" Width="1100">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView/>
@@ -21,11 +21,14 @@
         <DataTemplate DataType="{x:Type vm:ManagerViewModel}">
             <views:ManagerView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:ClientTransactionViewModel}">
+<DataTemplate DataType="{x:Type vm:MyTransactionsViewModel}">
             <views:ClientTransactionView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:MyTransactionsViewModel}">
-            <views:ClientTransactionView/>
+        <DataTemplate DataType="{x:Type vm:MyInterestsViewModel}">
+            <views:MyInterestsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ManagerInterestsViewModel}">
+            <views:ManagerInterestsView/>
         </DataTemplate>
     </Window.Resources>
 

@@ -1,8 +1,10 @@
 using BankApp.Commands;
 using BankApp.Models;
 using BankApp.Services;
+using BankApp.Views;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BankApp.ViewModels;
@@ -14,6 +16,8 @@ public class AccountViewModel : ViewModelBase
 
     public ICommand BackCommand { get; }
     public IRelayCommand ShowTransactionsCommand { get; }
+    public IRelayCommand ShowInterestsCommand { get; }
+    public IRelayCommand EditProfileCommand { get; }
     public IRelayCommand LogoutCommand { get; }
 
     public string Name => _account == null ? "Dummy" : $"{_account.FirstName} {_account.LastName}";
@@ -28,6 +32,18 @@ public class AccountViewModel : ViewModelBase
         BackCommand = new NavigateCommand(services.NavigationService, () => new LoginViewModel(services));
         ShowTransactionsCommand = new RelayCommand(() =>
             services.NavigationService.Navigate(new MyTransactionsViewModel(services, account!)));
+        ShowInterestsCommand = new RelayCommand(() =>
+            services.NavigationService.Navigate(new MyInterestsViewModel(services, account!)));
+        EditProfileCommand = new AsyncRelayCommand(async () =>
+        {
+            if (_account == null) return;
+            var dialog = new EditProfileDialog(_account);
+            if (dialog.ShowDialog() != true) return;
+            bool ok = await services.AccountService.UpdateMeAsync(
+                dialog.FirstName, dialog.LastName, dialog.Email,
+                dialog.Phone, dialog.Address, dialog.Birthdate, dialog.Password);
+            if (!ok) MessageBox.Show("Profil konnte nicht gespeichert werden.");
+        });
         LogoutCommand = new RelayCommand(() =>
         {
             services.AccountService.Logout();
@@ -35,10 +51,18 @@ public class AccountViewModel : ViewModelBase
         });
 
         Cards = new ObservableCollection<CardViewModel>();
-        if (_account?.Cards != null)
-        {
-            foreach (var card in _account.Cards)
-                Cards.Add(new CardViewModel(services, card, _account));
-        }
+        LoadCardsAsync();
+    }
+
+    private async void LoadCardsAsync()
+    {
+        if (_account == null) return;
+        var cards = await _services.CardService.GetCardsAsync();
+        if (cards == null) return;
+
+        _account.Cards = cards;
+        Cards.Clear();
+        foreach (var card in cards)
+            Cards.Add(new CardViewModel(_services, card, _account));
     }
 }

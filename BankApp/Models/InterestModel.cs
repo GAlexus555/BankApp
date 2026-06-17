@@ -1,39 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using System.Text.Json.Serialization;
 
-namespace BankApp.Models
+namespace BankApp.Models;
+
+public class InterestModel
 {
-    public class InterestModel
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+    [JsonPropertyName("card_id")]
+    public int CardId { get; set; }
+    [JsonPropertyName("amount")]
+    public int Amount { get; set; }
+    [JsonPropertyName("created_at")]
+    public DateOnly CreatedAt { get; set; }
+    [JsonPropertyName("withdrawn")]
+    public bool Withdrawn { get; set; }
+    [JsonPropertyName("interest_rate")]
+    public double InterestRate { get; set; }
+
+    public double CurrentAmount
     {
-        [JsonPropertyName("card_id")]
-        public int card_id { get; set; }
-        [JsonPropertyName("amount")]
-        public int amount { get; set; }
-        [JsonPropertyName("created_at")]
-        public DateOnly createdAt { get; set; }
-        [JsonPropertyName("id")]
-        public int id { get; set; }
-        [JsonPropertyName("withdrawn")]
-        public bool withdrawn { get; set; }
-        [JsonPropertyName("interest_rate")]
-        public double interest_rate { get; set; }
-
-        public double CurrentAmount 
-        { 
-            get 
-            {
-                return GetCurrentAmount();
-            }
-        }
-
-        private double GetCurrentAmount()
+        get
         {
-            DateTime today = DateTime.Today;
-            DateTime created = createdAt.ToDateTime(TimeOnly.MinValue);
-            double years = (today - created).Days / 365.25;
-            return amount * Math.Pow(1 + interest_rate, years);
+            double years = (DateTime.Today - CreatedAt.ToDateTime(TimeOnly.MinValue)).Days / 365.25;
+            return Amount * Math.Pow(1 + InterestRate, years);
         }
     }
+
+    public string DisplayInvested     => $"€ {Amount / 100.0:F2}";
+    public string DisplayCurrentValue => $"€ {CurrentAmount / 100.0:F2}";
+    public string DisplayGrowth       => $"+€ {Math.Max(0, CurrentAmount - Amount) / 100.0:F2}";
+    public string DisplayRate         => $"{InterestRate * 100:F2} %";
+    public string DisplayDate         => CreatedAt.ToString("dd.MM.yyyy");
+    public string? CardIBAN            { get; set; }
+    public string DisplayCardId       => CardIBAN ?? $"Karte #{CardId}";
+    public string StatusText          => Withdrawn ? "Ausgezahlt" : "● Aktiv";
+    public bool   IsActive            => !Withdrawn;
 }

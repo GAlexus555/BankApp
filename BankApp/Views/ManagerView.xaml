@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:BankApp.Views"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="900">
 
@@ -65,6 +66,15 @@
                     <Button Content="↔  Überweisungen"
                             Command="{Binding ShowTransactions}"
                             Style="{StaticResource SidebarNavButton}"/>
+                    <Button Content="💰  Sparzinsen"
+                            Command="{Binding ShowInterests}"
+                            Style="{StaticResource SidebarNavButton}"/>
+                    <Button Content="📊  Statistiken"
+                            Command="{Binding ShowStats}"
+                            Style="{StaticResource SidebarNavButton}"/>
+                    <Button Content="📋  Audit-Log"
+                            Command="{Binding ShowAuditLogs}"
+                            Style="{StaticResource SidebarNavButton}"/>
 
                     <Separator Style="{StaticResource SidebarDivider}"/>
 
@@ -93,14 +103,275 @@
                     Margin="0,4,0,16"/>
         </Grid>
 
-        <!-- Client list -->
-        <ListView Width="280" DockPanel.Dock="Left"
-                  ItemsSource="{Binding Collection}"
-                  SelectedItem="{Binding SelectedItem}"
-                  BorderThickness="0,0,1,0">
-        </ListView>
+        <!-- Main content area -->
+        <Grid>
 
-        <!-- Cards panel -->
-        <local:ManagerCardsView/>
+            <!-- CLIENT VIEW -->
+            <DockPanel>
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsClientView}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+
+                <ListView Width="260" DockPanel.Dock="Left"
+                          ItemsSource="{Binding Collection}"
+                          SelectedItem="{Binding SelectedItem}"
+                          BorderThickness="0,0,1,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,3">
+                                <TextBlock FontWeight="SemiBold" FontSize="13" Foreground="#1E293B">
+                                    <Run Text="{Binding FirstName}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding LastName}"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Email}" FontSize="11" Foreground="#64748B"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <local:ManagerCardsView/>
+            </DockPanel>
+
+            <!-- TRANSACTION VIEW -->
+            <DockPanel>
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsTransactionView}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+
+                <Border DockPanel.Dock="Top" Padding="16,11"
+                        BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Background="White">
+                    <TextBlock Text="{Binding TransactionTitle}"
+                               FontSize="14" FontWeight="SemiBold" Foreground="#1E293B"/>
+                </Border>
+
+                <ListView ItemsSource="{Binding Collection}"
+                          BorderThickness="0" Background="{StaticResource BackgroundBrush}">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="10,9"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Border x:Name="bd" Background="White"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}">
+                                            <GridViewRowPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#EFF6FF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Datum" Width="95"
+                                            DisplayMemberBinding="{Binding CreatedAt, StringFormat=dd.MM.yyyy}"/>
+                            <GridViewColumn Header="Betrag" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AmountEuros, StringFormat='€ {0:F2}'}"
+                                                   Foreground="#059669" FontWeight="SemiBold"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Von IBAN" Width="190"
+                                            DisplayMemberBinding="{Binding IBANFrom}"/>
+                            <GridViewColumn Header="An IBAN" Width="190"
+                                            DisplayMemberBinding="{Binding IBANTo}"/>
+                            <GridViewColumn Header="Beschreibung" Width="180"
+                                            DisplayMemberBinding="{Binding Description}"/>
+                            <GridViewColumn Header="Status" Width="80"
+                                            DisplayMemberBinding="{Binding Status}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+
+            <!-- STATS VIEW -->
+            <DockPanel>
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsStatsView}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+
+                <Border DockPanel.Dock="Top" Padding="16,11"
+                        BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Background="White">
+                    <TextBlock Text="Statistiken  ·  Transaktionen pro Konto"
+                               FontSize="14" FontWeight="SemiBold" Foreground="#1E293B"/>
+                </Border>
+
+                <!-- Split: table left, charts right -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="370"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: rankings table -->
+                    <ListView Grid.Column="0"
+                              ItemsSource="{Binding Stats}"
+                              BorderThickness="0,0,1,0" BorderBrush="#E2E8F0"
+                              Background="{StaticResource BackgroundBrush}">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Padding" Value="10,9"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <Border x:Name="bd" Background="White"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <GridViewRowPresenter VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#EFF6FF"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="170"
+                                                DisplayMemberBinding="{Binding DisplayName}"/>
+                                <GridViewColumn Header="Transaktionen" Width="100"
+                                                DisplayMemberBinding="{Binding TransactionCount}"/>
+                                <GridViewColumn Header="Volumen" Width="95">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayTotal}"
+                                                       Foreground="#059669" FontWeight="SemiBold"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <!-- Right: live charts -->
+                    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"
+                                  Background="{StaticResource BackgroundBrush}">
+                        <StackPanel Margin="16,12">
+                            <TextBlock Text="Transaktionen pro Konto"
+                                       FontSize="12" FontWeight="SemiBold"
+                                       Foreground="#475569" Margin="0,0,0,6"/>
+                            <lvc:CartesianChart
+                                Series="{Binding TxCountSeries}"
+                                XAxes="{Binding StatsXAxes}"
+                                Height="210"
+                                Margin="0,0,0,20"
+                                AnimationsSpeed="0:0:0.4"/>
+
+                            <TextBlock Text="Gesamtvolumen (€)"
+                                       FontSize="12" FontWeight="SemiBold"
+                                       Foreground="#475569" Margin="0,0,0,6"/>
+                            <lvc:CartesianChart
+                                Series="{Binding VolumeSeries}"
+                                XAxes="{Binding StatsXAxes}"
+                                Height="210"
+                                AnimationsSpeed="0:0:0.4"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </DockPanel>
+
+            <!-- AUDIT LOG VIEW -->
+            <DockPanel>
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsAuditView}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
+
+                <Border DockPanel.Dock="Top" Padding="16,11"
+                        BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Background="White">
+                    <TextBlock Text="Audit-Log  ·  Alle Datenbankänderungen"
+                               FontSize="14" FontWeight="SemiBold" Foreground="#1E293B"/>
+                </Border>
+
+                <ListView ItemsSource="{Binding AuditLogs}"
+                          BorderThickness="0" Background="{StaticResource BackgroundBrush}">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="10,9"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#F1F5F9"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Border x:Name="bd" Background="White"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}">
+                                            <GridViewRowPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#EFF6FF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Zeitpunkt" Width="130"
+                                            DisplayMemberBinding="{Binding DisplayTimestamp}"/>
+                            <GridViewColumn Header="Konto-ID" Width="80"
+                                            DisplayMemberBinding="{Binding AccountId}"/>
+                            <GridViewColumn Header="Tabelle" Width="110"
+                                            DisplayMemberBinding="{Binding TableName}"/>
+                            <GridViewColumn Header="Aktion" Width="90"
+                                            DisplayMemberBinding="{Binding Action}"/>
+                            <GridViewColumn Header="Details" Width="280"
+                                            DisplayMemberBinding="{Binding DisplayDetails}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+
+        </Grid>
     </DockPanel>
 </UserControl>

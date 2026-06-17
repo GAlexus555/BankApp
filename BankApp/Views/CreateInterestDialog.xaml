@@ -1,0 +1,62 @@
+<Window x:Class="BankApp.Views.CreateInterestDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sparguthaben anlegen"
+        Width="400" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F1F5F9">
+
+    <StackPanel>
+        <!-- Header -->
+        <Border Height="56">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#1A56DB" Offset="0"/>
+                    <GradientStop Color="#1E40AF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <StackPanel VerticalAlignment="Center" Margin="20,0">
+                <TextBlock Text="Neues Sparguthaben" Foreground="White"
+                           FontSize="16" FontWeight="Bold"/>
+                <TextBlock x:Name="tbRate" Foreground="#BFDBFE" FontSize="11" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Form -->
+        <StackPanel Margin="24,20,24,16">
+            <!-- Card picker -->
+            <TextBlock Text="Karte" Style="{StaticResource FormLabel}"/>
+            <ComboBox x:Name="cbCard"
+                      DisplayMemberPath="DisplayText"
+                      SelectedIndex="0"
+                      Padding="10,8" FontSize="13"
+                      BorderBrush="#CBD5E1" BorderThickness="1"
+                      Background="White"/>
+            <TextBlock x:Name="errCard" Text="Bitte eine Karte auswählen."
+                       Style="{StaticResource FieldError}"/>
+
+            <!-- Amount -->
+            <TextBlock Text="Betrag (€)" Style="{StaticResource FormLabel}" Margin="0,12,0,0"/>
+            <TextBox x:Name="tbAmount" Text="100"
+                     Padding="10,8" FontSize="13"
+                     BorderBrush="#CBD5E1" BorderThickness="1"/>
+            <TextBlock x:Name="errAmount" Text="Bitte einen Betrag von mindestens 1 € eingeben."
+                       Style="{StaticResource FieldError}"/>
+
+            <!-- Buttons -->
+            <Grid Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Abbrechen"
+                        Style="{StaticResource GhostButton}"
+                        Click="Cancel_Click"/>
+                <Button Grid.Column="2" Content="Anlegen"
+                        Click="Create_Click"/>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</Window>

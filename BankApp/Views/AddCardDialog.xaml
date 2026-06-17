@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BankApp.Views"
-        Title="Neue Karte" Width="420" Height="480"
+        Title="Neue Karte" Width="420"
+        SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
@@ -22,67 +23,51 @@
         </Border>
 
         <!-- Form -->
-        <Grid Margin="22,18,22,16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <StackPanel Margin="22,18,22,16">
 
             <!-- IBAN -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,12">
-                <TextBlock Text="IBAN" Style="{StaticResource FormLabel}"/>
-                <TextBox x:Name="tbIBAN" FontFamily="Courier New"/>
-                <TextBlock x:Name="errIBAN" Text="IBAN muss 15–34 Zeichen haben (nur Buchstaben und Ziffern)."
-                           Style="{StaticResource FieldError}"/>
-            </StackPanel>
+            <TextBlock Text="IBAN" Style="{StaticResource FormLabel}"/>
+            <TextBox x:Name="tbIBAN" FontFamily="Courier New" Margin="0,0,0,4"/>
+            <TextBlock x:Name="errIBAN" Text="IBAN muss 15–34 Zeichen haben (nur Buchstaben und Ziffern)."
+                       Style="{StaticResource FieldError}" Margin="0,0,0,12"/>
 
             <!-- Card number + CVC -->
-            <StackPanel Grid.Row="1" Margin="0,0,0,12">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="90"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Kartennummer (8–19 Ziffern)" Style="{StaticResource FormLabel}"/>
-                        <TextBox x:Name="tbCardNr" FontFamily="Courier New"/>
-                        <TextBlock x:Name="errCardNr" Text="Bitte 8–19 Ziffern eingeben."
-                                   Style="{StaticResource FieldError}"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="CVC" Style="{StaticResource FormLabel}"/>
-                        <TextBox x:Name="tbCVC"/>
-                        <TextBlock x:Name="errCVC" Text="3–4 Ziffern."
-                                   Style="{StaticResource FieldError}"/>
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="90"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Kartennummer (13–16 Ziffern)" Style="{StaticResource FormLabel}"/>
+                    <TextBox x:Name="tbCardNr" FontFamily="Courier New" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="errCardNr" Text="Bitte 13–16 Ziffern eingeben."
+                               Style="{StaticResource FieldError}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="CVC" Style="{StaticResource FormLabel}"/>
+                    <TextBox x:Name="tbCVC" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="errCVC" Text="3–4 Ziffern."
+                               Style="{StaticResource FieldError}"/>
+                </StackPanel>
+            </Grid>
 
             <!-- Expiry date -->
-            <StackPanel Grid.Row="2" Margin="0,0,0,12">
-                <TextBlock Text="Ablaufdatum" Style="{StaticResource FormLabel}"/>
-                <DatePicker x:Name="dpExpireDate"/>
-                <TextBlock x:Name="errExpiry" Text="Ablaufdatum muss in der Zukunft liegen."
-                           Style="{StaticResource FieldError}"/>
-            </StackPanel>
+            <TextBlock Text="Ablaufdatum" Style="{StaticResource FormLabel}"/>
+            <DatePicker x:Name="dpExpireDate" Margin="0,0,0,4"/>
+            <TextBlock x:Name="errExpiry" Text="Ablaufdatum muss in der Zukunft liegen."
+                       Style="{StaticResource FieldError}" Margin="0,0,0,12"/>
 
             <!-- Initial balance -->
-            <StackPanel Grid.Row="3" Margin="0,0,0,12">
-                <TextBlock Text="Startguthaben" Style="{StaticResource FormLabel}"/>
-                <local:AmountPicker x:Name="amountPicker"/>
-            </StackPanel>
+            <TextBlock Text="Startguthaben" Style="{StaticResource FormLabel}"/>
+            <local:AmountPicker x:Name="amountPicker" Margin="0,0,0,16"/>
 
             <!-- Buttons -->
-            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Abbrechen" Style="{StaticResource GhostButton}"
                         Width="110" Margin="0,0,10,0" Click="Cancel_Click"/>
                 <Button Content="Erstellen" Width="110" Click="Create_Click"/>
             </StackPanel>
-        </Grid>
+        </StackPanel>
     </DockPanel>
 </Window>

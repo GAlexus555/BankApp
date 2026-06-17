@@ -10,4 +10,6 @@ public interface ICardService
     Task<List<CardModel>?> GetAllCardsAsync();
     Task<List<CardModel>?> GetCardsByAccountIdAsync(int accountId);
     Task<CardModel?> CreateCardAsync(int amountCents, CardStatus status, int ownerId, string iban, string cardNr, int cvc, DateTime expireDate);
+    Task<bool> UpdateCardStatusAsync(int cardId, CardStatus status);
+    Task<bool> DeleteCardAsync(int cardId);
 }
