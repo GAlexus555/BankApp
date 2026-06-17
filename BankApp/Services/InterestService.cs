@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 
 namespace BankApp.Services;
 
+// prompt: Erstelle einen InterestService mit CreateInterest, GetMyInterests, GetAllInterests, WithdrawInterest mit Serilog-Logging
 public class InterestService(HttpClient _client) : IInterestService
 {
     public async Task<InterestModel> CreateInterestAsync(int card_id, int amount_cents)

@@ -122,6 +122,7 @@ namespace BankApp.ViewModels
             await LoadClients();
         }
 
+        // prompt: Lade alle Clients parallel mit Task.WhenAll damit Karten aller Accounts gleichzeitig abgerufen werden statt nacheinander
         private async Task LoadClients()
         {
             ActiveView = ManagerActiveView.Clients;
@@ -153,6 +154,7 @@ namespace BankApp.ViewModels
             OnPropertyChanged(nameof(Collection));
         }
 
+        // prompt: Baue LiveCharts2 ColumnSeries für Transaktionsanzahl und Volumen aus den Stats-Daten auf, sortiert nach Transaktionsanzahl absteigend
         private async Task LoadStats()
         {
             ActiveView = ManagerActiveView.Stats;
