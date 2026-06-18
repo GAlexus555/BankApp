@@ -11,8 +11,10 @@ public class UnauthorizedHandler : DelegatingHandler
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var response = await base.SendAsync(request, cancellationToken);
+
         if (response.StatusCode == HttpStatusCode.Unauthorized)
             Unauthorized?.Invoke();
+
         return response;
     }
 }
