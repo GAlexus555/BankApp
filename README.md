@@ -1,19 +1,25 @@
 # BankApp
 
-**Klasse:** 3HIF · **Schuljahr:** 2025/26  
-**Team:** Alexei & Chiara
+Fach: POS ( + DBI)
 
-Eine WPF-Desktop-Anwendung zur Verwaltung einer fiktiven Bank. Kommuniziert über HTTP mit einem [Python-FastAPI-Backend](https://github.com/GAlexus555/BankAppAPI) und unterstützt zwei Benutzerrollen.
+Projektname: Midas
 
----
+Projektgruppe: Alexei Galaburda, Chiara Bitschnau
 
-## Rollen
+Klasse: 3AHIF
 
-| Rolle | Rechte |
-|---|---|
-| **Client** | Login, eigene Karten & Guthaben einsehen, Überweisungen tätigen, Sparzinskonten verwalten |
-| **Manager** | Alle Kunden/Karten/Transaktionen verwalten, Statistiken & Audit-Log abrufen, neue Manager anlegen |
+Jahr: 2026
 
+Betreuer: Lukas Diem, Christoph Bauer
+
+## Kurzberschreibung
+BankApp ist eine App, in der man sich entweder als User oder als Bankverwalter anmelden kann. 
+
+Als User kann man seine Karten mit IBAN, Kartennummer, Ablaufdatum und dem Gesamtbetrag anschauen und Geld überweisen. 
+
+Als Bankverwalter kann man User sowie Bankkarten erstellen, ändern und löschen. Auch kann man die Zinsaccounts verwalten. 
+
+####  Das Ziel ist, das die Daten aus der Datenbank einfach ablesen und über die WPF Anwendung einfach und intuitiv darzustellen
 ---
 
 ## Voraussetzungen
@@ -153,11 +159,11 @@ Folgende Teile wurden mit KI-Unterstützung (Claude Code) erstellt und sind im C
 | 15.05.2026 | Projektidee, Anforderungen, Technologiestack gewählt | Alexei & Chiara |
 | 19.05.2026 | Klassendiagramme, GUI-Skizzen | Alexei & Chiara |
 | 20.05.2026 | MVVM-Grundgerüst (ViewModelBase, NavigationStore) | Alexei |
-| 21.05.2026 | Models, LoginView | Alexei |
+| 21.05.2026 | Models, LoginView | Alexei & Chiara |
 | 22.05.2026 | AccountService mit JWT-Login | Alexei |
 | 26.05.2026 | AccountView, CardView | Alexei |
 | 27.05.2026 | TransactionView, AmountPicker | Alexei |
-| 28.05.2026 | CardService, ManagerViewModel Grundgerüst | Alexei |
+| 28.05.2026 | CardService, ManagerViewModel Grundgerüst | Alexei & Chiara |
 | 02.06.2026 | AddClientDialog, EditClientDialog, AddCardDialog | Alexei |
 | 03.06.2026 | **Zwischenpräsentation** | Alexei & Chiara |
 | 04.06.2026 | 4-Panel-System mit ManagerActiveView-Enum | Alexei |
@@ -168,4 +174,10 @@ Folgende Teile wurden mit KI-Unterstützung (Claude Code) erstellt und sind im C
 | 12.06.2026 | LiveCharts2 Diagramme | Alexei |
 | 13.06.2026 | AuditLog-Panel, EditProfileDialog | Alexei |
 | 16.06.2026 | Serilog-Logging, xUnit-Tests, Manager-Rollenwahl, Kartenaktualisierung | Alexei |
-| 17.06.2026 | **Endpräsentation / Abgabe** | Alexei & Chiara |
+| 17.06.2026 | **Endpräsentation** | Alexei & Chiara |
+| 18.06.2026 | Tests improved | Chiara |  
+| 18.06.2026 | **Abgabe** | Alexei & Chiara |
+
+## Wichtiges das gelernt wurde
+
+**Chiara:** durch Alexei sehr viel gelernt; MVVM
